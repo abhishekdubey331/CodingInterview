@@ -6,20 +6,38 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.android.synthetic.main.activity_main.*
 import java.text.DecimalFormat
 
-/***
- * You have:
- * 1. DataSource.getRates which returns rates for a selected currency
- * 2. Adapter which can display a currency and an amount
- * 3. onBaseValueTextChanged callback with base amount
- * 4. onItemClicked with index of clicked item. Base currency isn't clickable
+/**
+ * ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
  *
- * You can use any library
+ * Objective:
+ * 1. Implement a currency converter (Check the video "demo.webm")
+ * 2. Tapping on a cell must move this cell to the top of the list
+ * 3. Changing the amount of the top cell must simultaneously update the value of the other cells
+ * 4. The rates must be updated every second
  *
- * Objective: add the ability to change the base currency and its amount
+ * ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+ *
+ * To get the rates you can use [DataSource.getRates]
+ *
+ * To display the values you can use [Adapter.models] setter
+ *
+ * To handle the actions you can use these callbacks:
+ * [onTopCellTextChanged] handles changes of the top cell value
+ * [onItemClicked] handles clicks on the cells
+ *
+ * ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+ *
+ * Feel free to use any libraries or frameworks you find useful or familiar with,
+ * and create your own classes and files.
+ *
+ * It's not supposed that you will be making changes to any class apart from [MainActivity]
+ * but if you see that it's needed for your implementation feel free to do it.
+ *
+ * ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
  */
 class MainActivity : AppCompatActivity() {
-    private val dataSource = DataSource()
-    private val adapter = Adapter(this::onBaseValueTextChanged, this::onItemClicked)
+    private val dataSource: DataSource = DataSourceImpl()
+    private val adapter: Adapter<AdapterImpl.ViewHolder> = AdapterImpl(this::onTopCellTextChanged, this::onItemClicked)
     private val decimalFormat = DecimalFormat("#0.0000")
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -29,20 +47,23 @@ class MainActivity : AppCompatActivity() {
         recyclerView.layoutManager = LinearLayoutManager(this)
         recyclerView.adapter = adapter
 
-        //test data, should be removed
-        val sampleModels = mutableListOf(
-            Adapter.Model("USD", decimalFormat.format(1.0))
-        )
-        sampleModels.addAll(
-            dataSource.getRates("USD").map { rate ->
-                Adapter.Model(rate.currency, decimalFormat.format(rate.value))
-            }
-        )
+//        /**
+//         * Example usage (displays static list)
+//         */
+//        val sampleModels = mutableListOf(
+//            Adapter.Model("USD", decimalFormat.format(1.0))
+//        )
+//        sampleModels.addAll(
+//            dataSource.getRates("USD").map { rate ->
+//                Adapter.Model(rate.currency, decimalFormat.format(rate.value))
+//            }
+//        )
+//
+//        adapter.models = sampleModels
 
-        adapter.models = sampleModels
     }
 
-    private fun onBaseValueTextChanged(text: String) {
+    private fun onTopCellTextChanged(text: String) {
 
     }
 

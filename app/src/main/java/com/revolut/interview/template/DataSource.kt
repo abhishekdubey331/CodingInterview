@@ -2,8 +2,30 @@ package com.revolut.interview.template
 
 import kotlin.random.Random
 
-class DataSource {
+interface DataSource {
+
+    /**
+     * Returns the rates for the passed currency,
+     * e.g. getRates("GBP") will return
+     *
+     * listOf(
+     *      Rate("AUD", 1.3906),
+     *      Rate("BGN", 1.6826),
+     *      Rate("BRL", 4.1225),
+     *      ...
+     * )
+     *
+     */
+    fun getRates(currency: String): List<Rate>
+
+}
+
+
+class DataSourceImpl : DataSource {
     private val currencies = listOf(
+        CurrencyData("USD", 1.0),
+        CurrencyData("GBP", 0.77279),
+        CurrencyData("EUR", 0.86033),
         CurrencyData("AUD", 1.3906),
         CurrencyData("BGN", 1.6826),
         CurrencyData("BRL", 4.1225),
@@ -12,7 +34,6 @@ class DataSource {
         CurrencyData("CNY", 6.8354),
         CurrencyData("CZK", 22.124),
         CurrencyData("DKK", 6.4152),
-        CurrencyData("GBP", 0.77279),
         CurrencyData("HKD", 7.8569),
         CurrencyData("HRK", 6.3958),
         CurrencyData("HUF", 280.89),
@@ -34,26 +55,24 @@ class DataSource {
         CurrencyData("SGD", 1.3765),
         CurrencyData("THB", 32.805),
         CurrencyData("TRY", 6.5628),
-        CurrencyData("ZAR", 15.334),
-        CurrencyData("USD", 1.0),
-        CurrencyData("EUR", 0.86033)
+        CurrencyData("ZAR", 15.334)
     )
 
     private val random = Random(System.currentTimeMillis())
 
-    fun getRates(baseCurrency: String): List<Rate> {
-        val base = currencies.first { it.name == baseCurrency }
+    override fun getRates(currency: String): List<Rate> {
+        val base = currencies.first { it.name == currency }
 
         return currencies.asSequence()
-            .filter { currency ->
-                currency.name != baseCurrency
+            .filter { currencyData ->
+                currencyData.name != currency
             }
-            .map { currency ->
+            .map { currencyData ->
                 val randomRatio = 1.0 + random.nextDouble() / 5.0 - 0.1
-                Rate(currency.name, (base.ratio / currency.ratio) * randomRatio)
+                Rate(currencyData.name, (base.ratio / currencyData.ratio) * randomRatio)
             }
             .toList()
     }
-}
 
-private data class CurrencyData(val name: String, val ratio: Double)
+    private data class CurrencyData(val name: String, val ratio: Double)
+}

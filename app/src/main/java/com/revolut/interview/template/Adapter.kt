@@ -8,13 +8,23 @@ import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import java.text.DecimalFormat
 
-class Adapter(
+abstract class Adapter<VH : RecyclerView.ViewHolder> : RecyclerView.Adapter<VH>() {
+
+    /**
+     * Setting models will update the displayed items
+     */
+    abstract var models: List<Model>
+
+    data class Model(val currency: String, val amount: String)
+
+}
+
+class AdapterImpl(
         private val onTextChanged: (String) -> Unit,
         private val onItemClicked: (Int) -> Unit
-) : RecyclerView.Adapter<Adapter.ViewHolder>() {
-    var models: List<Model> = emptyList()
+) : Adapter<AdapterImpl.ViewHolder>() {
+    override var models: List<Model> = emptyList()
         set(value) {
             field = value
             notifyDataSetChanged()
@@ -36,10 +46,10 @@ class Adapter(
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = models[position]
 
+        holder.amount.removeTextChangedListener(watcher)
         holder.currency.text = item.currency
         holder.amount.setText(item.amount)
 
-        holder.amount.removeTextChangedListener(watcher)
         holder.amount.isEnabled = position == 0
 
         if (position == 0) {
@@ -56,6 +66,4 @@ class Adapter(
         val currency = itemView.findViewById<TextView>(R.id.currency)
         val amount = itemView.findViewById<EditText>(R.id.amount)
     }
-
-    data class Model(val currency: String, val amount: String)
 }
