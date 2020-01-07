@@ -1,0 +1,39 @@
+group 'RevolutTestExchangeRates'
+version '0.1-SNAPSHOT'
+
+buildscript {
+    ext.kotlin_version = '1.3.60'
+    ext.ktor_version = '1.2.6'
+
+    repositories {
+        jcenter()
+        mavenCentral()
+    }
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+        classpath "org.jetbrains.kotlinx:atomicfu-gradle-plugin:0.13.1"
+        classpath "org.jetbrains.kotlinx:kotlinx-metadata-jvm:0.0.5.1"
+    }
+}
+
+apply plugin: 'java'
+apply plugin: 'kotlin'
+apply plugin: 'application'
+apply plugin: 'kotlinx-atomicfu'
+
+mainClassName = 'io.ktor.server.netty.EngineMain'
+
+sourceCompatibility = 1.8
+
+repositories {
+    jcenter()
+    mavenCentral()
+
+    dependencies {
+        compile "ch.qos.logback:logback-classic:1.2.3"
+        compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
+        compile "io.ktor:ktor-server-netty:$ktor_version"
+        implementation "io.ktor:ktor-gson:$ktor_version"
+        testCompile group: 'junit', name: 'junit', version: '4.12'
+    }
+}
