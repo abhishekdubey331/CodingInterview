@@ -11,6 +11,8 @@ import io.ktor.response.respond
 import io.ktor.response.respondRedirect
 import io.ktor.routing.Routing
 import io.ktor.routing.get
+import io.ktor.server.engine.embeddedServer
+import io.ktor.server.netty.Netty
 import kotlin.math.floor
 import kotlin.random.Random
 
@@ -58,7 +60,7 @@ fun Application.main() {
         register(ContentType.Application.Json, GsonConverter())
     }
     install(Routing) {
-        get("/healtchcheck") {
+        get("/healthcheck") {
             return@get call.respond(HttpStatusCode.OK)
         }
         get("/"){
@@ -87,4 +89,8 @@ private fun calculateRates(baseCurrency: String, baseCurrencyRate: Double): Map<
         val rate = (it.value / baseCurrencyRate)
         floor((rate + rate * random.nextDouble() * 0.02) * 1000) / 1000
     }
+}
+
+fun main(args: Array<String>) {
+    embeddedServer(Netty, 80, module = Application::main).start()
 }
