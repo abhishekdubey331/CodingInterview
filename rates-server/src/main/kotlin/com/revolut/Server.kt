@@ -58,6 +58,9 @@ fun Application.main() {
         register(ContentType.Application.Json, GsonConverter())
     }
     install(Routing) {
+        get("/healtchcheck") {
+            return@get call.respond(HttpStatusCode.OK)
+        }
         get("/"){
             call.respondRedirect("/latest", permanent = true)
         }
