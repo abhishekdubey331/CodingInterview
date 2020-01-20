@@ -92,5 +92,5 @@ private fun calculateRates(baseCurrency: String, baseCurrencyRate: Double): Map<
 }
 
 fun main(args: Array<String>) {
-    embeddedServer(Netty, 80, module = Application::main).start()
+    embeddedServer(Netty, 8080, module = Application::main).start()
 }
