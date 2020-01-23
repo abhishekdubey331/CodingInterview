@@ -43,7 +43,6 @@ jar {
 }
 
 repositories {
-    mavenLocal()
     mavenCentral()
     jcenter() {
         content {
@@ -73,8 +72,7 @@ repositories {
 }
 
 dependencies {
-    implementation platform("com.revolut.app:backend-app-bom:1.1-SNAPSHOT")
-    compile "com.revolut.common:common-infra"
+    compile "com.revolut.common:common-infra:1.0-SNAPSHOT"
     compile "ch.qos.logback:logback-classic:1.2.3"
     compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
     compile "io.ktor:ktor-server-netty:$ktor_version"
