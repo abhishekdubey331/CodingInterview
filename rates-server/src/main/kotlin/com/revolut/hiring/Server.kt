@@ -65,10 +65,10 @@ fun Application.main() {
         get("/healthcheck") {
             return@get call.respond(HttpStatusCode.OK)
         }
-        get("/"){
-            call.respondRedirect("/latest", permanent = true)
+        get("api/android/"){
+            call.respondRedirect("api/android/latest", permanent = true)
         }
-        get("/latest") {
+        get("api/android/latest") {
             val baseCurrency = call.request.queryParameters["base"]?.toUpperCase() ?: "EUR"
             val baseCurrencyRate = rates[baseCurrency]
             if (baseCurrencyRate != null) {
