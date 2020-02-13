@@ -13,6 +13,7 @@ import io.ktor.response.respond
 import io.ktor.response.respondRedirect
 import io.ktor.routing.Routing
 import io.ktor.routing.get
+import io.ktor.routing.route
 import io.ktor.server.engine.embeddedServer
 import io.ktor.server.netty.Netty
 import kotlin.math.floor
@@ -53,6 +54,7 @@ private val rates = mapOf(
     "USD" to 1.129649,
     "ZAR" to 15.893079
 )
+
 data class ExchangeRatesResponse(val baseCurrency: String, val rates: Map<String, Double>)
 
 fun Application.main() {
@@ -62,24 +64,30 @@ fun Application.main() {
         register(ContentType.Application.Json, GsonConverter())
     }
     install(Routing) {
-        get("/healthcheck") {
-            return@get call.respond(HttpStatusCode.OK)
-        }
-        get("api/android/"){
-            call.respondRedirect("api/android/latest", permanent = true)
-        }
-        get("api/android/latest") {
-            val baseCurrency = call.request.queryParameters["base"]?.toUpperCase() ?: "EUR"
-            val baseCurrencyRate = rates[baseCurrency]
-            if (baseCurrencyRate != null) {
-                call.respond(
-                    ExchangeRatesResponse(
-                        baseCurrency = baseCurrency,
-                        rates = calculateRates(baseCurrency, baseCurrencyRate)
-                    )
-                )
-            } else {
-                call.respond(HttpStatusCode.BadRequest, "Invalid base currency")
+        route("/") {
+            get("/healthcheck") {
+                return@get call.respond(HttpStatusCode.OK)
+            }
+            route("api") {
+                route("android") {
+                    get("/") {
+                        call.respondRedirect("/api/android/latest", permanent = false)
+                    }
+                    get("latest") {
+                        val baseCurrency = call.request.queryParameters["base"]?.toUpperCase() ?: "EUR"
+                        val baseCurrencyRate = rates[baseCurrency]
+                        if (baseCurrencyRate != null) {
+                            call.respond(
+                                ExchangeRatesResponse(
+                                    baseCurrency = baseCurrency,
+                                    rates = calculateRates(baseCurrency, baseCurrencyRate)
+                                )
+                            )
+                        } else {
+                            call.respond(HttpStatusCode.BadRequest, "Invalid base currency")
+                        }
+                    }
+                }
             }
         }
     }
