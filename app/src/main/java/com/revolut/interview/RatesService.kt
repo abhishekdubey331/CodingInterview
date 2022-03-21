@@ -1,7 +1,7 @@
 package com.revolut.interview
 
-import com.revolut.interview.data.RatesDto
 import io.reactivex.Single
+import io.reactivex.schedulers.Schedulers
 import kotlin.random.Random
 
 interface RatesService {
@@ -67,6 +67,6 @@ class LocalRatesService : RatesService {
                     RatesDto(rates.currency, rates.value * randomRatio)
                 } else rates
             }
-        )
+        ).subscribeOn(Schedulers.io())
     }
 }
