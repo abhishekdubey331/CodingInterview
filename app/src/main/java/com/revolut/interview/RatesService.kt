@@ -50,7 +50,6 @@ class LocalRatesService : RatesService {
     private val random = Random(System.currentTimeMillis())
 
     override suspend fun getRates(): List<RatesDto> {
-
         return rates.mapIndexed { index, rates ->
             if (index != 0) {
                 val randomRatio = 1.0 + random.nextDouble() / 5.0 - 0.1
@@ -67,6 +66,6 @@ class LocalRatesService : RatesService {
                     RatesDto(rates.currency, rates.value * randomRatio)
                 } else rates
             }
-        ).subscribeOn(Schedulers.io())
+        )
     }
 }
