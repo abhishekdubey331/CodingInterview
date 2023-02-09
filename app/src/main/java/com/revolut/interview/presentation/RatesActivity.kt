@@ -1,10 +1,11 @@
-package com.revolut.interview
+package com.revolut.interview.presentation
 
 import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.revolut.interview.R
 
 class RatesActivity : AppCompatActivity() {
 

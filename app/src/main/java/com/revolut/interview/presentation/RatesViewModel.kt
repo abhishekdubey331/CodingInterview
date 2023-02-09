@@ -1,4 +1,4 @@
-package com.revolut.interview
+package com.revolut.interview.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider

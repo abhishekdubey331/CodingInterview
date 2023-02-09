@@ -1,10 +1,12 @@
-package com.revolut.interview
+package com.revolut.interview.presentation
 
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.revolut.interview.R
+import com.revolut.interview.domain.Rate
 
 class RatesAdapter() : RecyclerView.Adapter<RatesAdapter.ViewHolder>() {
 
@@ -22,7 +24,6 @@ class RatesAdapter() : RecyclerView.Adapter<RatesAdapter.ViewHolder>() {
     }
 
     override fun onBindViewHolder(viewHolder: ViewHolder, position: Int) {
-
         viewHolder.currency.text = ratesList[position].currency
         viewHolder.value.text = ratesList[position].value.toString()
     }
