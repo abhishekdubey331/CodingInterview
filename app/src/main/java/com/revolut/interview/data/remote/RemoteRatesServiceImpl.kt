@@ -1,17 +1,14 @@
-package com.revolut.interview
+package com.revolut.interview.data.remote
 
 import com.revolut.interview.data.RateDto
 import io.reactivex.Single
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.runBlocking
 import kotlin.random.Random
 
-interface RatesService {
-    suspend fun getRates(baseCurrencyCode: String): List<RateDto>
-    fun getRatesSingle(baseCurrencyCode: String): Single<List<RateDto>>
-}
+class RemoteRatesServiceImpl : RatesService {
 
-class LocalRatesService : RatesService {
-
-    private val rates = listOf(
+    private val baseResponse = listOf(
         RateDto("USD", 1.0),
         RateDto("GBP", 0.77279),
         RateDto("EUR", 0.86033),
@@ -50,22 +47,36 @@ class LocalRatesService : RatesService {
     private val random = Random(System.currentTimeMillis())
 
     override suspend fun getRates(baseCurrencyCode: String): List<RateDto> {
-        return rates.mapIndexed { index, rates ->
-            if (index != 0) {
-                val randomRatio = 1.0 + random.nextDouble() / 5.0 - 0.1
-                RateDto(rates.currency, rates.value * randomRatio)
-            } else rates
+        simulateNetworkDelayCoroutines()
+        return performNetworkCall()
+    }
+
+    override fun getRatesSingle(baseCurrencyCode: String): Single<List<RateDto>> = Single.just(
+        performNetworkCall()
+    ).simulateNetworkDelayRx()
+
+    private fun performNetworkCall(): List<RateDto> {
+        return baseResponse.mapIndexed { index, rates ->
+            randomiseResponseItem(index, rates)
         }
     }
 
-    override fun getRatesSingle(baseCurrencyCode: String): Single<List<RateDto>> {
-        return Single.just(
-            rates.mapIndexed { index, rates ->
-                if (index != 0) {
-                    val randomRatio = 1.0 + random.nextDouble() / 5.0 - 0.1
-                    RateDto(rates.currency, rates.value * randomRatio)
-                } else rates
-            }
-        )
+    private fun randomiseResponseItem(
+        index: Int,
+        rates: RateDto
+    ) = if (index != 0) {
+        val randomRatio = 1.0 + random.nextDouble() / 5.0 - 0.1
+        RateDto(rates.currency, rates.value * randomRatio)
+    } else rates
+
+    private fun Single<List<RateDto>>.simulateNetworkDelayRx(): Single<List<RateDto>> = map {
+        Thread.sleep(random.nextInt(0, 1500).toLong())
+        it
+    }
+
+    private fun simulateNetworkDelayCoroutines() {
+        runBlocking {
+            delay(random.nextInt(0, 1500).toLong())
+        }
     }
 }
